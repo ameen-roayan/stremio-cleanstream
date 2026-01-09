@@ -6,6 +6,11 @@
  * Usage:
  *   npm start                  - Start the server
  *   npm start -- --install     - Install to local Stremio
+ * 
+ * Environment Variables:
+ *   DATABASE_URL    - PostgreSQL connection string (optional, falls back to JSON)
+ *   PORT            - Server port (default: 7000)
+ *   CLEANSTREAM_BASE_URL - Public URL of the server
  */
 
 const { serveHTTP, getRouter } = require('stremio-addon-sdk');
@@ -15,6 +20,8 @@ const express = require('express');
 const { builder, manifest } = require('./addon/manifest');
 const { subtitlesHandler } = require('./addon/subtitlesHandler');
 const apiRoutes = require('./api/routes');
+const db = require('./database');
+const cache = require('./cache');
 
 // Configuration
 const PORT = process.env.PORT || 7000;
@@ -308,21 +315,68 @@ app.get('/:config/manifest.json', (req, res) => {
 app.use(getRouter(addonInterface));
 
 // Start server
-app.listen(PORT, () => {
-  console.log('');
-  console.log('🎬 CleanStream - Stremio Addon');
-  console.log('═══════════════════════════════════════════');
-  console.log(`✅ Server running at: ${BASE_URL}`);
-  console.log(`📦 Addon manifest:    ${BASE_URL}/manifest.json`);
-  console.log(`⚙️  Configure:         ${BASE_URL}/configure`);
-  console.log(`📊 API endpoint:      ${BASE_URL}/api`);
-  console.log('');
-  console.log('📥 Install in Stremio:');
-  console.log(`   stremio://${BASE_URL.replace(/^https?:\/\//, '')}/manifest.json`);
-  console.log('');
-  console.log('🤝 Contribute skip data:');
-  console.log(`   POST ${BASE_URL}/api/contribute/{imdbId}`);
-  console.log('');
+async function startServer() {
+  // Initialize database (runs migrations if DATABASE_URL is set)
+  const dbInitialized = await db.initialize();
+  
+  if (dbInitialized) {
+    console.log('✅ PostgreSQL connected and migrations applied');
+  } else if (process.env.DATABASE_URL) {
+    console.warn('⚠️  DATABASE_URL set but connection failed, check your database');
+  } else {
+    console.log('ℹ️  No DATABASE_URL set, using JSON file storage');
+  }
+
+  // Initialize Redis cache
+  const cacheInitialized = await cache.initialize();
+  
+  if (cacheInitialized) {
+    console.log('✅ Redis cache connected');
+  } else if (process.env.REDIS_URL) {
+    console.warn('⚠️  REDIS_URL set but connection failed, caching disabled');
+  } else {
+    console.log('ℹ️  No REDIS_URL set, caching disabled');
+  }
+
+  app.listen(PORT, () => {
+    console.log('');
+    console.log('🎬 CleanStream - Stremio Addon');
+    console.log('═══════════════════════════════════════════');
+    console.log(`✅ Server running at: ${BASE_URL}`);
+    console.log(`📦 Addon manifest:    ${BASE_URL}/manifest.json`);
+    console.log(`⚙️  Configure:         ${BASE_URL}/configure`);
+    console.log(`📊 API endpoint:      ${BASE_URL}/api`);
+    console.log(`💾 Storage:           ${dbInitialized ? 'PostgreSQL' : 'JSON files'}`);
+    console.log(`⚡ Cache:             ${cacheInitialized ? 'Redis' : 'disabled'}`);
+    console.log('');
+    console.log('📥 Install in Stremio:');
+    console.log(`   stremio://${BASE_URL.replace(/^https?:\/\//, '')}/manifest.json`);
+    console.log('');
+    console.log('🤝 Contribute skip data:');
+    console.log(`   POST ${BASE_URL}/api/contribute/{imdbId}`);
+    console.log('');
+  });
+}
+
+// Graceful shutdown
+process.on('SIGTERM', async () => {
+  console.log('Received SIGTERM, shutting down gracefully...');
+  await cache.disconnect();
+  await db.disconnect();
+  process.exit(0);
+});
+
+process.on('SIGINT', async () => {
+  console.log('Received SIGINT, shutting down gracefully...');
+  await cache.disconnect();
+  await db.disconnect();
+  process.exit(0);
+});
+
+// Start the server
+startServer().catch(err => {
+  console.error('Failed to start server:', err);
+  process.exit(1);
 });
 
 module.exports = app;

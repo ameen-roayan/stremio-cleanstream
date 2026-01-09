@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   cleanstream:
     build: .
@@ -13,12 +11,54 @@ services:
       - NODE_ENV=production
       - PORT=7000
       - CLEANSTREAM_BASE_URL=${CLEANSTREAM_BASE_URL:-http://localhost:7000}
+      - DATABASE_URL=postgresql://cleanstream:cleanstream@postgres:5432/cleanstream
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:7000/api/health"]
       interval: 30s
       timeout: 3s
       retries: 3
-      start_period: 5s
+      start_period: 10s
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: cleanstream-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=cleanstream
+      - POSTGRES_PASSWORD=cleanstream
+      - POSTGRES_DB=cleanstream
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cleanstream"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: cleanstream-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   cleanstream-data:
+  postgres-data:
+  redis-data:

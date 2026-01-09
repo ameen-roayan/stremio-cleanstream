@@ -20,8 +20,8 @@ const SEVERITY_LEVELS = {
  * @param {object} userConfig - User's filter preferences
  * @returns {array} Array of skip segments
  */
-function generateSkips(imdbId, userConfig = {}) {
-  const filterData = db.getFilters(imdbId);
+async function generateSkips(imdbId, userConfig = {}) {
+  const filterData = await db.getFilters(imdbId);
   
   if (!filterData || !filterData.segments || filterData.segments.length === 0) {
     return [];

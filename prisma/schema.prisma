@@ -1,0 +1,165 @@
+// CleanStream Database Schema
+// Prisma handles migrations safely with advisory locks for multi-replica deployments
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Movies and TV shows
+model Title {
+  id        String   @id @default(cuid())
+  imdbId    String   @unique
+  title     String?
+  year      Int?
+  type      TitleType?
+  runtime   Int?      // Runtime in milliseconds
+  
+  // Metadata
+  posterUrl String?
+  
+  // Relationships
+  segments  Segment[]
+  releases  Release[]
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([imdbId])
+}
+
+enum TitleType {
+  movie
+  series
+  episode
+}
+
+// Skip segments
+model Segment {
+  id          String   @id @default(cuid())
+  
+  // Foreign key
+  titleId     String
+  title       Title    @relation(fields: [titleId], references: [id], onDelete: Cascade)
+  
+  // Timing (in milliseconds)
+  startMs     Int
+  endMs       Int
+  
+  // Classification
+  category    Category
+  subcategory String?
+  severity    Severity @default(high)
+  channel     Channel  @default(both)
+  
+  // Optional description
+  comment     String?
+  
+  // Contribution tracking
+  contributor   String   @default("anonymous")
+  contributorIp String?
+  
+  // Community voting
+  upvotes     Int      @default(0)
+  downvotes   Int      @default(0)
+  
+  // Verification status
+  verified    Boolean  @default(false)
+  verifiedBy  String?
+  verifiedAt  DateTime?
+  
+  // For different releases/versions of the same movie
+  releaseId   String?
+  release     Release? @relation(fields: [releaseId], references: [id])
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([titleId])
+  @@index([category])
+  @@index([verified])
+}
+
+enum Category {
+  nudity
+  sex
+  violence
+  language
+  drugs
+  fear
+  discrimination
+  dispensable
+  commercial
+  intro
+  outro
+  recap
+  credits
+}
+
+enum Severity {
+  low
+  medium
+  high
+}
+
+enum Channel {
+  both
+  video
+  audio
+}
+
+// Different releases of the same title (theatrical, director's cut, streaming versions)
+model Release {
+  id          String   @id @default(cuid())
+  
+  titleId     String
+  title       Title    @relation(fields: [titleId], references: [id], onDelete: Cascade)
+  
+  name        String   // e.g., "Theatrical", "Director's Cut", "Netflix"
+  runtime     Int?     // Runtime in milliseconds
+  
+  // Offset adjustments for this release
+  offsetMs    Int      @default(0)
+  
+  segments    Segment[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([titleId, name])
+  @@index([titleId])
+}
+
+// Track votes per user/session to prevent double voting
+model Vote {
+visitorId   String   // Hashed IP or session ID
+  segmentId   String
+  voteType    VoteType
+  
+  createdAt   DateTime @default(now())
+  
+  @@id([visitorId, segmentId])
+  @@index([segmentId])
+}
+
+enum VoteType {
+  up
+  down
+}
+
+// API usage tracking (optional, for rate limiting)
+model ApiUsage {
+  id          String   @id @default(cuid())
+  visitorId   String
+  endpoint    String
+  
+  createdAt   DateTime @default(now())
+  
+  @@index([visitorId, createdAt])
+}

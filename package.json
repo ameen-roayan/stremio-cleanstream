@@ -6,7 +6,13 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
-    "contribute": "node src/cli/contribute.js"
+    "contribute": "node src/cli/contribute.js",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:migrate:dev": "prisma migrate dev",
+    "db:studio": "prisma studio",
+    "db:seed": "node prisma/seed.js",
+    "postinstall": "prisma generate || true"
   },
   "keywords": [
     "stremio",
@@ -21,14 +27,20 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/cleanstream/cleanstream-stremio"
+    "url": "https://github.com/ameen-roayan/stremio-cleanstream"
   },
   "engines": {
     "node": ">=18.0.0"
   },
   "dependencies": {
+    "@prisma/client": "^5.22.0",
     "cors": "^2.8.5",
     "express": "^5.2.1",
+    "ioredis": "^5.9.1",
+    "pg": "^8.16.3",
     "stremio-addon-sdk": "^1.6.10"
+  },
+  "devDependencies": {
+    "prisma": "^5.22.0"
   }
 }

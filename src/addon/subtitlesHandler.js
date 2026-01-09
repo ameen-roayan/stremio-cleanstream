@@ -48,7 +48,7 @@ async function subtitlesHandler({ type, id, config }) {
   const imdbId = parts[0];
   
   // Check if we have filter data for this content
-  const filterData = db.getFilters(imdbId);
+  const filterData = await db.getFilters(imdbId);
   
   if (!filterData || !filterData.segments || filterData.segments.length === 0) {
     console.log(`[CleanStream] No filter data found for ${imdbId}`);
@@ -59,7 +59,7 @@ async function subtitlesHandler({ type, id, config }) {
   const userConfig = parseUserConfig(config);
   
   // Generate skips based on user preferences
-  const skips = generateSkips(imdbId, userConfig);
+  const skips = await generateSkips(imdbId, userConfig);
   
   if (skips.length === 0) {
     console.log(`[CleanStream] No applicable skips for ${imdbId} with current settings`);

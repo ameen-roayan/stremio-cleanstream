@@ -5,6 +5,7 @@
 
 const express = require('express');
 const db = require('../database');
+const cache = require('../cache');
 const { generateSkips, generateSkipVTT, generateSkipJSON } = require('../utils/skipGenerator');
 const { parseMCF, generateMCF, mcfToDBSegments, dbToMCFSegments } = require('../utils/mcf');
 
@@ -14,67 +15,104 @@ const router = express.Router();
  * GET /api/health
  * Health check endpoint
  */
-router.get('/health', (req, res) => {
-  res.json({ status: 'ok', version: '1.0.0' });
+router.get('/health', async (req, res) => {
+  const [dbHealth, cacheHealth] = await Promise.all([
+    db.healthCheck(),
+    cache.healthCheck(),
+  ]);
+  
+  const isHealthy = dbHealth.status === 'healthy' || !process.env.DATABASE_URL;
+  
+  res.status(isHealthy ? 200 : 503).json({ 
+    status: isHealthy ? 'ok' : 'degraded', 
+    version: '1.0.0',
+    database: dbHealth,
+    cache: cacheHealth,
+  });
 });
 
 /**
  * GET /api/stats
  * Get statistics about available filter data
  */
-router.get('/stats', (req, res) => {
-  const stats = db.getStats();
-  res.json(stats);
+router.get('/stats', async (req, res) => {
+  try {
+    const stats = await db.getStats();
+    res.json(stats);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to get stats' });
+  }
 });
 
 /**
  * GET /api/filters
  * List all available filter IDs
  */
-router.get('/filters', (req, res) => {
-  const filters = db.listAllFilters();
-  res.json({ count: filters.length, filters });
+router.get('/filters', async (req, res) => {
+  try {
+    const titles = await db.listTitles({ limit: 100 });
+    res.json({ count: titles.length, filters: titles });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to list filters' });
+  }
 });
 
 /**
  * GET /api/filters/:imdbId
  * Get raw filter data for a specific movie/show
  */
-router.get('/filters/:imdbId', (req, res) => {
-  const { imdbId } = req.params;
-  const filterData = db.getFilters(imdbId);
-  
-  if (!filterData) {
-    return res.status(404).json({ error: 'No filter data found for this ID' });
+router.get('/filters/:imdbId', async (req, res) => {
+  try {
+    const { imdbId } = req.params;
+    const filterData = await db.getFilters(imdbId);
+    
+    if (!filterData) {
+      return res.status(404).json({ error: 'No filter data found for this ID' });
+    }
+    
+    res.json(filterData);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to get filter data' });
   }
-  
-  res.json(filterData);
 });
 
 /**
  * GET /api/skips/:imdbId
  * Get processed skip data with user preferences applied
  */
-router.get('/skips/:imdbId', (req, res) => {
-  const { imdbId } = req.params;
-  
-  // Default config for family-friendly viewing
-  const defaultConfig = {
-    nudity: 'high',
-    sex: 'high',
-    violence: 'medium',
-    language: 'off',
-    drugs: 'off',
-    fear: 'off',
-  };
-  
-  // Parse user config from query params
-  let userConfig = { ...defaultConfig };
-  if (req.query.config) {
-    try {
-      userConfig = { ...defaultConfig, ...JSON.parse(req.query.config) };
-    } catch (e) {
-      // Use individual query params as fallback
+router.get('/skips/:imdbId', async (req, res) => {
+  try {
+    const { imdbId } = req.params;
+    
+    // Default config for family-friendly viewing
+    const defaultConfig = {
+      nudity: 'high',
+      sex: 'high',
+      violence: 'medium',
+      language: 'off',
+      drugs: 'off',
+      fear: 'off',
+    };
+    
+    // Parse user config from query params
+    let userConfig = { ...defaultConfig };
+    if (req.query.config) {
+      try {
+        userConfig = { ...defaultConfig, ...JSON.parse(req.query.config) };
+      } catch (e) {
+        // Use individual query params as fallback
+        userConfig = {
+          ...defaultConfig,
+          nudity: req.query.nudity || defaultConfig.nudity,
+          sex: req.query.sex || defaultConfig.sex,
+          violence: req.query.violence || defaultConfig.violence,
+          language: req.query.language || defaultConfig.language,
+          drugs: req.query.drugs || defaultConfig.drugs,
+          fear: req.query.fear || defaultConfig.fear,
+        };
+      }
+    } else if (Object.keys(req.query).some(k => ['nudity', 'sex', 'violence', 'language', 'drugs', 'fear'].includes(k))) {
+      // Individual query params provided
       userConfig = {
         ...defaultConfig,
         nudity: req.query.nudity || defaultConfig.nudity,
@@ -85,30 +123,21 @@ router.get('/skips/:imdbId', (req, res) => {
         fear: req.query.fear || defaultConfig.fear,
       };
     }
-  } else if (Object.keys(req.query).some(k => ['nudity', 'sex', 'violence', 'language', 'drugs', 'fear'].includes(k))) {
-    // Individual query params provided
-    userConfig = {
-      ...defaultConfig,
-      nudity: req.query.nudity || defaultConfig.nudity,
-      sex: req.query.sex || defaultConfig.sex,
-      violence: req.query.violence || defaultConfig.violence,
-      language: req.query.language || defaultConfig.language,
-      drugs: req.query.drugs || defaultConfig.drugs,
-      fear: req.query.fear || defaultConfig.fear,
-    };
+    
+    const skips = await generateSkips(imdbId, userConfig);
+    const filterData = await db.getFilters(imdbId);
+    
+    res.json(generateSkipJSON(skips, imdbId, filterData?.metadata || {}));
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to generate skips' });
   }
-  
-  const skips = generateSkips(imdbId, userConfig);
-  const filterData = db.getFilters(imdbId);
-  
-  res.json(generateSkipJSON(skips, imdbId, filterData?.metadata || {}));
 });
 
 /**
  * GET /api/skips/:imdbId/vtt
  * Get skip data as VTT subtitle format
  */
-router.get('/skips/:imdbId/vtt', (req, res) => {
+router.get('/skips/:imdbId/vtt', async (req, res) => {
   const { imdbId } = req.params;
   
   let userConfig = {};
@@ -120,7 +149,7 @@ router.get('/skips/:imdbId/vtt', (req, res) => {
     }
   }
   
-  const skips = generateSkips(imdbId, userConfig);
+  const skips = await generateSkips(imdbId, userConfig);
   const vtt = generateSkipVTT(skips, imdbId);
   
   res.setHeader('Content-Type', 'text/vtt; charset=utf-8');
@@ -132,7 +161,7 @@ router.get('/skips/:imdbId/vtt', (req, res) => {
  * GET /api/skips/:imdbId/json
  * Get skip data as JSON
  */
-router.get('/skips/:imdbId/json', (req, res) => {
+router.get('/skips/:imdbId/json', async (req, res) => {
   const { imdbId } = req.params;
   
   let userConfig = {};
@@ -144,8 +173,8 @@ router.get('/skips/:imdbId/json', (req, res) => {
     }
   }
   
-  const skips = generateSkips(imdbId, userConfig);
-  const filterData = db.getFilters(imdbId);
+  const skips = await generateSkips(imdbId, userConfig);
+  const filterData = await db.getFilters(imdbId);
   
   res.json(generateSkipJSON(skips, imdbId, filterData?.metadata || {}));
 });
@@ -154,9 +183,9 @@ router.get('/skips/:imdbId/json', (req, res) => {
  * GET /api/skips/:imdbId/mcf
  * Get skip data in MCF format
  */
-router.get('/skips/:imdbId/mcf', (req, res) => {
+router.get('/skips/:imdbId/mcf', async (req, res) => {
   const { imdbId } = req.params;
-  const filterData = db.getFilters(imdbId);
+  const filterData = await db.getFilters(imdbId);
   
   if (!filterData) {
     return res.status(404).json({ error: 'No filter data found for this ID' });
