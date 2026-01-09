@@ -4,6 +4,12 @@
 
 Skip unwanted scenes (nudity, violence, language, etc.) in movies and TV shows. Community-driven, open-source alternative to VidAngel/ClearPlay.
 
+## ⚠️ Current Status
+
+**Working now:** Shows on-screen warnings before scenes you want to skip, telling you when to manually skip.
+
+**Coming soon:** Auto-skip functionality. We've submitted a [feature request to Stremio](https://github.com/Stremio/stremio-features/issues/XXX) to add a skip API. Once implemented, CleanStream will auto-skip scenes automatically.
+
 ## Features
 
 - 🎯 **Configurable filters** - Choose what to skip: nudity, violence, language, drugs, fear
