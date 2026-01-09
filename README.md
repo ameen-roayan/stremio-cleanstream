@@ -8,7 +8,7 @@ Skip unwanted scenes (nudity, violence, language, etc.) in movies and TV shows. 
 
 **Working now:** Shows on-screen warnings before scenes you want to skip, telling you when to manually skip.
 
-**Coming soon:** Auto-skip functionality. We've submitted a [feature request to Stremio](https://github.com/Stremio/stremio-features/issues/XXX) to add a skip API. Once implemented, CleanStream will auto-skip scenes automatically.
+**Coming soon:** Auto-skip functionality. We've submitted a [feature request to Stremio](https://github.com/Stremio/stremio-features/issues/1608) to add a skip API. Once implemented, CleanStream will auto-skip scenes automatically.
 
 ## Features
 
