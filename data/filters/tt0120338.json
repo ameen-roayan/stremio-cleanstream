@@ -1,0 +1,69 @@
+{
+  "imdbId": "tt0120338",
+  "title": "Titanic",
+  "year": 1997,
+  "type": "movie",
+  "segments": [
+    {
+      "id": "seg_titanic_001",
+      "startMs": 3780000,
+      "endMs": 3840000,
+      "category": "nudity",
+      "subcategory": "toplessness",
+      "severity": "high",
+      "channel": "video",
+      "comment": "Drawing scene - partial nudity",
+      "contributor": "sample",
+      "addedAt": "2025-01-01T00:00:00Z",
+      "votes": { "up": 45, "down": 3 }
+    },
+    {
+      "id": "seg_titanic_002",
+      "startMs": 4020000,
+      "endMs": 4140000,
+      "category": "sex",
+      "subcategory": "coitus",
+      "severity": "medium",
+      "channel": "both",
+      "comment": "Car scene - implied intimacy",
+      "contributor": "sample",
+      "addedAt": "2025-01-01T00:00:00Z",
+      "votes": { "up": 38, "down": 2 }
+    },
+    {
+      "id": "seg_titanic_003",
+      "startMs": 9000000,
+      "endMs": 9300000,
+      "category": "fear",
+      "subcategory": "death",
+      "severity": "high",
+      "channel": "both",
+      "comment": "Ship sinking - people dying in water",
+      "contributor": "sample",
+      "addedAt": "2025-01-01T00:00:00Z",
+      "votes": { "up": 25, "down": 5 }
+    },
+    {
+      "id": "seg_titanic_004",
+      "startMs": 9600000,
+      "endMs": 9660000,
+      "category": "violence",
+      "subcategory": "murder",
+      "severity": "medium",
+      "channel": "both",
+      "comment": "Officer shoots passenger then self",
+      "contributor": "sample",
+      "addedAt": "2025-01-01T00:00:00Z",
+      "votes": { "up": 30, "down": 1 }
+    }
+  ],
+  "releases": [
+    {
+      "name": "Theatrical",
+      "runtime": 11640000
+    }
+  ],
+  "version": 1,
+  "createdAt": "2025-01-01T00:00:00Z",
+  "updatedAt": "2025-01-01T00:00:00Z"
+}

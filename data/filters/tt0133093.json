@@ -1,0 +1,56 @@
+{
+  "imdbId": "tt0133093",
+  "title": "The Matrix",
+  "year": 1999,
+  "type": "movie",
+  "segments": [
+    {
+      "id": "seg_sample_001",
+      "startMs": 132000,
+      "endMs": 138000,
+      "category": "violence",
+      "subcategory": "weapons",
+      "severity": "high",
+      "channel": "both",
+      "comment": "Gun violence in lobby scene",
+      "contributor": "sample",
+      "addedAt": "2025-01-01T00:00:00Z",
+      "votes": { "up": 15, "down": 1 }
+    },
+    {
+      "id": "seg_sample_002",
+      "startMs": 2340000,
+      "endMs": 2400000,
+      "category": "violence",
+      "subcategory": "violence",
+      "severity": "high",
+      "channel": "both",
+      "comment": "Intense lobby shootout",
+      "contributor": "sample",
+      "addedAt": "2025-01-01T00:00:00Z",
+      "votes": { "up": 22, "down": 2 }
+    },
+    {
+      "id": "seg_sample_003",
+      "startMs": 4200000,
+      "endMs": 4230000,
+      "category": "violence",
+      "subcategory": "murder",
+      "severity": "high",
+      "channel": "both",
+      "comment": "Agent Smith shoots character",
+      "contributor": "sample",
+      "addedAt": "2025-01-01T00:00:00Z",
+      "votes": { "up": 18, "down": 0 }
+    }
+  ],
+  "releases": [
+    {
+      "name": "Theatrical",
+      "runtime": 8160000
+    }
+  ],
+  "version": 1,
+  "createdAt": "2025-01-01T00:00:00Z",
+  "updatedAt": "2025-01-01T00:00:00Z"
+}

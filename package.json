@@ -1,0 +1,34 @@
+{
+  "name": "cleanstream",
+  "version": "1.0.0",
+  "description": "Stremio addon for family-friendly viewing - skip unwanted scenes in movies and TV shows",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "contribute": "node src/cli/contribute.js"
+  },
+  "keywords": [
+    "stremio",
+    "addon",
+    "filter",
+    "family-friendly",
+    "skip-scenes",
+    "parental-control",
+    "content-filter"
+  ],
+  "author": "CleanStream Community",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cleanstream/cleanstream-stremio"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.2.1",
+    "stremio-addon-sdk": "^1.6.10"
+  }
+}
