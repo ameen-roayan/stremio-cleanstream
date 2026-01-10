@@ -1,224 +1,194 @@
-# 🎬 CleanStream
+# CleanStream - Stremio Addon
 
-**Family-friendly viewing for Stremio** - Skip nudity, violence, and other unwanted scenes automatically.
+**Family-friendly viewing with smart scene skipping**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+Skip unwanted scenes (nudity, violence, language, etc.) in movies and TV shows. Community-driven, open-source alternative to VidAngel/ClearPlay.
 
-## What is CleanStream?
+## 🚀 Quick Install
 
-CleanStream is a free, open-source Stremio addon that helps you watch movies and TV shows with your family by automatically marking scenes you might want to skip. It's community-driven - anyone can contribute skip data for any movie or show.
+### Public Instance (Recommended)
 
-**Key Features:**
-- 🎯 **Customizable filters** - Choose what to skip: nudity, violence, language, drugs, and more
-- 📊 **Severity levels** - Fine-tune how sensitive your filters are (low/medium/high)
-- 🤝 **Community-driven** - Everyone can contribute skip timestamps
-- 🆓 **Free forever** - No subscriptions, no ads, no tracking
-- 📱 **Works everywhere** - Desktop, Android, iOS, Web
+**https://cleanstream.elfhosted.com**
 
-## Quick Start
+1. Visit https://cleanstream.elfhosted.com/configure
+2. Choose your filter settings
+3. Click "Install in Stremio Desktop" or "Open in Stremio Web"
 
-### 1. Install the Addon
-
-**From Web:**
-1. Go to https://your-cleanstream-server.com/configure
-2. Adjust your filter settings
-3. Click "Install in Stremio"
-
-**Manual Install:**
-Add this URL in Stremio's addon section:
+Or add directly in Stremio:
 ```
-https://your-cleanstream-server.com/manifest.json
+https://cleanstream.elfhosted.com/manifest.json
 ```
 
-### 2. Watch Movies
+### Self-Hosted
 
-1. Open any movie/show in Stremio
-2. Look for the "CleanStream" subtitle track
-3. Select it to see skip suggestions
-4. Press → to skip flagged scenes
+See [Self-Hosting](#self-hosting) below.
+
+## ⚠️ Current Status
+
+**Working now:** Shows on-screen warnings before scenes you want to skip, telling you when to manually skip.
+
+**Coming soon:** Auto-skip functionality via browser extension.
+
+## Features
+
+- 🎯 **Configurable filters** - Choose what to skip: nudity, violence, language, drugs, fear
+- 📊 **Severity levels** - Filter by low/medium/high intensity
+- 📚 **"CleanStream Ready" Catalog** - Browse movies with skip data in Stremio's Discover section
+- 🎬 **376+ movies** - Pre-loaded with skip data from VideoSkip
+- 🤝 **Community contributions** - Add skip timestamps for movies you watch
+- 📥 **MCF compatible** - Import/export MovieContentFilter format
+- 🗳️ **Voting system** - Upvote accurate timestamps, downvote mistakes
+- 🐳 **Docker ready** - One command deployment with PostgreSQL + Redis
+
+## How It Works
+
+1. **Install the addon** from [cleanstream.elfhosted.com](https://cleanstream.elfhosted.com)
+2. **Browse the catalog** - In Stremio's Discover section, look for **"CleanStream Ready"** to see movies with skip data
+3. **Play a movie** - Select any movie and find a stream
+4. **Enable skip subtitles** - Go to subtitles (CC) and select **"CleanStream (X skips)"**
+5. **Watch for warnings** - You'll see on-screen alerts before scenes to skip
 
 ## Self-Hosting
 
 ### Docker (Recommended)
 
 ```bash
-docker run -d \
-  --name cleanstream \
-  -p 7000:7000 \
-  -v cleanstream-data:/app/data \
-  -e CLEANSTREAM_BASE_URL=https://your-domain.com \
-  cleanstream/cleanstream-stremio
+# Clone the repo
+git clone https://github.com/ameen-roayan/stremio-cleanstream.git
+cd stremio-cleanstream
+
+# Start everything (app + PostgreSQL + Redis)
+docker compose up -d
+
+# Seed the database with VideoSkip data
+docker exec cleanstream npx prisma db seed
+
+# View logs
+docker compose logs -f cleanstream
 ```
 
-### Manual Installation
+The addon will be available at `http://localhost:7000`
+
+### Without Docker
 
 ```bash
-# Clone the repository
-git clone https://github.com/cleanstream/cleanstream-stremio.git
-cd cleanstream-stremio
-
-# Install dependencies
 npm install
-
-# Start the server
-npm start
+npm run dev
 ```
 
-The server will start at `http://localhost:7000`
+This runs with JSON file storage (no database required).
 
-### Environment Variables
+## Environment Variables
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `PORT` | `7000` | Server port |
-| `CLEANSTREAM_BASE_URL` | `http://localhost:7000` | Public URL of your server |
-| `CLEANSTREAM_DATA_DIR` | `./data/filters` | Where to store filter data |
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PORT` | Server port | `7000` |
+| `DATABASE_URL` | PostgreSQL connection string | (uses JSON files if not set) |
+| `REDIS_URL` | Redis connection string | (caching disabled if not set) |
+| `CLEANSTREAM_BASE_URL` | Public URL of the server | `http://localhost:7000` |
 
-## API Reference
-
-### Get Skip Data
+### Example
 
 ```bash
-# Get skips with default settings
-GET /api/skips/tt0120338
-
-# Get skips with custom settings
-GET /api/skips/tt0120338?nudity=high&violence=medium
-
-# Get as VTT subtitle
-GET /api/skips/tt0120338/vtt
-
-# Get as JSON
-GET /api/skips/tt0120338/json
-
-# Get as MCF format
-GET /api/skips/tt0120338/mcf
+DATABASE_URL=postgresql://user:pass@localhost:5432/cleanstream
+REDIS_URL=redis://localhost:6379
+CLEANSTREAM_BASE_URL=https://cleanstream.example.com
 ```
 
-### Contribute Skip Data
+## Database
+
+CleanStream uses PostgreSQL with Prisma ORM:
+
+- **Migrations run automatically** on app startup
+- **Multi-replica safe** - Uses PostgreSQL advisory locks
+- **Falls back to JSON files** when no DATABASE_URL is set
+
+### Manual Migration Commands
 
 ```bash
-# Add a single segment
-POST /api/contribute/tt0120338
-Content-Type: application/json
+# Create a new migration (development)
+npm run db:migrate:dev -- --name add_new_feature
 
-{
-  "startMs": 3780000,
-  "endMs": 3840000,
-  "category": "nudity",
-  "severity": "high",
-  "comment": "Drawing scene"
-}
+# Apply migrations (production)
+npm run db:migrate
 
-# Import MCF file
-POST /api/contribute/tt0120338/mcf
-Content-Type: text/plain
-
-WEBVTT MovieContentFilter 1.1.0
-...
+# Open Prisma Studio (GUI)
+npm run db:studio
 ```
 
-### Vote on Segments
+## API Endpoints
 
-```bash
-POST /api/vote/tt0120338/seg_abc123
-Content-Type: application/json
-
-{
-  "vote": "up"  // or "down"
-}
-```
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/health` | GET | Health check (includes DB + Redis status) |
+| `/api/filters` | GET | List all available titles |
+| `/api/filters/:imdbId` | GET | Get filter data for a title |
+| `/api/skips/:imdbId` | GET | Get processed skips with user config |
+| `/api/contribute/:imdbId` | POST | Add a new skip segment |
+| `/api/vote/:imdbId/:segmentId` | POST | Vote on a segment |
+| `/api/stats` | GET | Get contribution statistics |
 
 ## Contributing Skip Data
 
-### Using the CLI
+### Via API
 
 ```bash
-# Add segments interactively
-npm run contribute add tt0120338
-
-# List existing segments
-npm run contribute list tt0120338
-
-# Export to MCF format
-npm run contribute export tt0120338 > titanic.mcf
+curl -X POST http://localhost:7000/api/contribute/tt0133093 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "startMs": 3600000,
+    "endMs": 3660000,
+    "category": "violence",
+    "severity": "high",
+    "comment": "Fight scene in lobby"
+  }'
 ```
 
-### Using the API
+### Via CLI
 
-See the [API Reference](#api-reference) above.
-
-### MCF Format
-
-CleanStream supports the [MovieContentFilter (MCF)](https://www.moviecontentfilter.com/specification) format for interoperability:
-
-```
-WEBVTT MovieContentFilter 1.1.0
-
-NOTE
-TITLE Titanic
-YEAR 1997
-TYPE movie
-IMDB http://www.imdb.com/title/tt0120338/
-
-NOTE
-START 00:00:00.000
-END 03:14:00.000
-
-01:03:00.000 --> 01:04:00.000
-nudity=high=video # Drawing scene
-
-01:07:00.000 --> 01:09:00.000
-sex=medium # Car scene
+```bash
+npm run contribute
 ```
 
-## Filter Categories
+## Install in Stremio
 
-| Category | Description | Subcategories |
-|----------|-------------|---------------|
-| `nudity` | Bare skin, nudity | toplessness, fullNudity, etc. |
-| `sex` | Sexual content | kissing, coitus, objectification |
-| `violence` | Fighting, gore | punching, weapons, murder |
-| `language` | Profanity | swearing, blasphemy |
-| `drugs` | Substance use | alcohol, cigarettes |
-| `fear` | Scary scenes | death, ghosts, jumpscares |
-| `discrimination` | Offensive content | racism, sexism |
+### Public Instance
+1. Open Stremio
+2. Go to Addons
+3. Enter: `https://cleanstream.elfhosted.com/manifest.json`
+4. Click Install
 
-Each segment has a severity: `low`, `medium`, or `high`.
+Or visit https://cleanstream.elfhosted.com/configure for a guided setup.
 
-## How It Works
+### Self-Hosted
+1. Open Stremio
+2. Go to Addons
+3. Enter: `http://localhost:7000/manifest.json`
+4. Click Install
 
-1. **User watches a movie** in Stremio
-2. **CleanStream addon** checks if we have skip data for that movie (by IMDB ID)
-3. **User's preferences** are applied (e.g., skip all nudity, only high violence)
-4. **Skip markers** are displayed as a subtitle track
-5. **User can skip** by pressing the forward button when prompted
+## Architecture
 
-## Roadmap
-
-- [ ] Web-based contribution interface
-- [ ] Integration with external databases
-- [ ] Machine learning for automatic scene detection
-- [ ] Browser extension for watching outside Stremio
-- [ ] Mobile app for contributing timestamps
-
-## Similar Projects
-
-- [VidAngel](https://www.vidangel.com/) - Commercial filtering service
-- [ClearPlay](https://www.clearplay.com/) - DVD/streaming filters
-- [MovieContentFilter](https://www.moviecontentfilter.com/) - Open-source format spec
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Stremio   │────▶│ CleanStream │────▶│ PostgreSQL  │
+│   Client    │     │   Addon     │     │             │
+└─────────────┘     └──────┬──────┘     └─────────────┘
+                          │
+                          ▼
+                   ┌─────────────┐
+                   │    Redis    │
+                   │   (Cache)   │
+                   └─────────────┘
+```
 
 ## License
 
-MIT License - see [LICENSE](LICENSE)
+MIT - See [LICENSE](LICENSE)
 
-## Acknowledgments
+## Credits & Data Sources
 
-- [Stremio](https://www.stremio.com/) for the amazing platform
-- [MovieContentFilter](https://www.moviecontentfilter.com/) for the MCF format specification
-- All our contributors! 💜
-
----
-
-**Made with ❤️ by the CleanStream community**
+- **[VideoSkip](https://videoskip.org)** - Initial skip timestamp data. Thanks to Francisco Ruiz and the VideoSkip community for building an amazing open database of skip timestamps.
+- [MovieContentFilter](https://www.moviecontentfilter.com/) - MCF format specification
+- [SponsorBlock](https://sponsor.ajay.app/) - Inspiration for community-driven content filtering
+- [Stremio](https://stremio.com/) - Addon SDK
+- [ElfHosted](https://elfhosted.com/) - Hosting infrastructure
