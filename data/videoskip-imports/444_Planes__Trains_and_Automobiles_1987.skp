@@ -1,0 +1,166 @@
+0:02:06.000 --> 0:02:06.001
+(SYNC AUDIO/TIME)
+
+
+0:15:15.71 --> 0:15:26.00
+nudity 1
+
+"To mute"
+
+0:02:17.08 --> 0:02:18.31
+profane word 1 (a**)
+
+0:02:25.7 --> 0:02:26.7
+profane word 1 (da**it)
+
+0:05:37.8 --> 0:05:38.64
+profane word 1 (bi*tch)
+
+0:07:47.52 --> 0:07:47.82
+profane word 1 (da*ned)
+
+0:08:10.34 --> 0:08:11.34
+profane word 1 (baJes*s)
+
+0:15:51.85 --> 0:15:52.83
+profane word 1 (da*n)
+
+0:22:57.66 --> 0:22:59.69
+profane word 1 (goddam)
+
+0:23:20.39 --> 0:23:22.83
+profane word 1 (tigha**)
+
+0:23:55.95 --> 0:23:57.75
+profane word 1 (jackass)
+
+0:31:22.46 --> 0:31:25.58
+profane word 1 (goddam)
+
+0:35:18.8 --> 0:35:21.57
+profane word 1 (goddam)
+
+0:46:44.21 --> 0:46:47.44
+profane word 1 (goddam)
+
+0:48:41.96 --> 0:48:46.32
+profane word 1 (fuck)
+
+0:48:46.11 --> 0:48:49.61
+profane word 1 (fuck)
+
+0:48:49.38 --> 0:48:52.13
+profane word 1 (fuck)
+
+0:48:51.84 --> 0:48:53.57
+profane word 1 (fuck)
+
+0:48:53.34 --> 0:48:55.07
+profane word 1 (fuck)
+
+0:48:54.84 --> 0:48:56.38
+profane word 1 (fuck)
+
+0:48:56.15 --> 0:48:58.78
+profane word 1 (fuck)
+
+0:49:03.88 --> 0:49:06.98
+profane word 1 (fuck)
+
+0:49:06.69 --> 0:49:10.36
+profane word 1 (fuck)
+
+0:49:10.05 --> 0:49:14.26
+profane word 1 (fuck)
+
+0:49:14.03 --> 0:49:16.13
+profane word 1 (fuck)
+
+0:49:18.00 --> 0:49:20.53
+profane word 1 (fuck)
+
+0:49:20.23 --> 0:49:24.38
+profane word 1 (fuck)
+
+0:49:24.15 --> 0:49:27.67
+profane word 1 (fuck)
+
+0:49:41.65 --> 0:49:44.75
+profane word 1 (fuck)
+
+0:51:02.13 --> 0:51:04.00
+profane word 1 (asshole)
+
+0:53:33.28 --> 0:53:35.28
+profane word 1 (damn)
+
+0:54:52.17 --> 0:54:55.9
+profane word 1 (goddam)
+
+0:58:06.4 --> 0:58:09.73
+profane word 1 (shit)
+
+0:59:45.46 --> 0:59:48.69
+profane word 1 (shit)
+
+1:04:41.92 --> 1:04:45.65
+profane word 1 (shit)
+
+1:07:29.13 --> 1:07:32.42
+profane word 1 (piss)
+
+1:12:53.14 --> 1:12:55.39
+profane word 1 (shit)
+
+1:13:58.64 --> 1:13:60.38
+profane word 1 (asshole)
+
+1:14:28.17 --> 1:14:33.17
+profane word 1
+
+Classifying content
+VideoSkip allows three different levels of editing for each category, but what exactly distinguishes, say, level 2 content from level 3 content, which the editor must decide as each edit is made? The general rule is: level 1 is anything problematic for children, but not necessarily for teens or adults; level 2 is anything problematic for teens or sensitive adults; level 3 is anything that even mature adults will find problematic.
+
+(1= Low/Kids/Mild)
+(2= Med/Teens/Moderate) 
+(3= High/Adults/Intense)
+
+"Catergories to filter"
+*Sex 	 Violence	 Profanity
+Substance	 Intense 	 Other*
+
+Sex and Nudity	Kissing. Conversation involving sex. Dorsal or distant nudity.	Implicit sex. Sexual situations. Passionate kissing. Frontal nudity.	Explicit sex. Sodomy. Bestiality. Rape. Pornography. Abuse of minors.
+-------------------------------------------------------------------------------------------------------
+Violence and Gore	Hitting. Belting. Distant shooting. Slapping. Corporal punishment.	Suicide. Dismemberment. Close-range or cold-blooded shooting. Knifing.	Sadism. Masochism. Torture. Gore designed to shock.
+-------------------------------------------------------------------------------------------------------
+Profanity and Hate	Dirty words in general. Cursing.	Idiomatic blasphemy. Racial slurs.	Intentional blasphemy. Satanism.
+-------------------------------------------------------------------------------------------------------
+Alcohol, Drugs, Tobacco	Substance use other than incidental. Addict behavior.	Intravenous use. Preparation of drugs. Teen use.	Content designed to incite substance abuse.
+-------------------------------------------------------------------------------------------------------
+Frightening, Intense	Spooky. Scary. Emotionally hard for children.	Shocking or emotionally hard for teens.	Shocking to adults.
+-------------------------------------------------------------------------------------------------------
+Other	Mild.	Moderate.	Intense.
+
+So, for instance, a scene where someone is getting shot in war (unless it's quite gory) would be a 1, but a hand-to-hand combat with a knife might be a 2, and you might write the edit as: "Violence 2 (hand to hand knife combat)". As usual, editors must exercise good judgment, keeping in mind the viewers that they are trying to keep safe.
+
+Editing movies quickly
+These instructions are for the browser extension. The process with the standalone version is simpler.
+Start streaming the movie as if you were going to watch it. Let ads and trailers pass. Freeze playback when the initial logos and credits show up. Click the VideoSkip button on the browser, which will open a popup window.
+Click the Edit button so the window expands and you see a box, where you will enter the skip information, plus a few more buttons. In the following steps, I'm assuming you have a pretty good idea of what you want to skip in this particular film. You can find clues in the Parental Guide section of the IMDB.com for the film, plus a few other family-oriented websites.
+Because the skips are triggered by time, and the same film can have different timings coming from different sources, you need to take a screenshot and its time, near the beginning of the movie, by clicking the "Take screenshot" button. You get better accuracy if the screen is showing something that is moving fast (it can be paused at the moment). See this guide for problems with screenshots.
+By now you should see a time in hour:minute:second (HMS) format in the box, and a screenshot on its right. It is a good practice to describe the screenshot in the line below the time. Then leave an empty line before the first actual skip.
+Individual skips have this format: a line containing the initial time in HMS format, followed by an arrow written like this " --> ", and the final time also in HMS format; then on the next line a category label (such as "sex", "violence", etc., or just the first three letters of it), a numerical rating from 1 to 3, an optional handling label (such as "image" or "word", explained below), and optional text between parentheses describing what it is. Example:
+
+(0:14:08.27 --> 0:14:14)
+(nude image 1 (male, from behind)
+
+There are buttons to enter the current time in the movie, or a correctly formatted arrow, but you'll need to type everything else. Leave an empty line before the next skip. The general idea behind the numerical ratings is: 1 = problematic for children, 2 = problematic for teens, 3 = problematic for adults. If you don't enter a number, VideoSkip will take it as a "1"
+To get done quickly, you can play the movie in fast forward (click the double-arrow button to toggle this), or move the handle on the time slider until you reach the general place where a skip is needed. Then you can use the single arrow buttons to find the precise times to begin and end a skip. To make sure a skip works completely, it is best to begin and end within "clean" sections of the film, without trying to get too close to the problem sections. If you want to blank the video with the sound still going, add the "video", "image", "blank", or "img" handling label. To mute the sound (and subtitles) but keep the video going, add the "audio", "word", "speech", or "sound" handling label. The order of the labels does not matter to the engine, and neither does whatever is written between parentheses.
+The blanking keywords and "blur" can affect only a small portion of the screen if desired. To do this, click the "Blur box" button so make a blurred square appear on the video. Move it around with the mouse (resize by holding the Alt key also). When you are satisfied, click the "Blur pos." button to insert the exact position of the blur box into the skip, as a list of four numbers within square brackets. Bear in mind that on playback the blur box will not move during the time of that skip.
+A single skip will involve just a single category. If a particular section of the movie contains several kinds of problematic material, or they overlap in time, make separate skips for each category. The order of the skips does not matter, though it is best to write them in sequential order. For instance, you may want to make short skips at levels 2 or 3 for the most problematic parts of an adult scene, plus a level 1 skip comprising the entire scene, for children's viewing.
+When you have written all the skips, save the file with the "Save" button, which will also ask you for a name. You can consider yourself done at this point, but the next couple steps are to check that the skips happen as intended.
+You can take the movie to any particular time written in the box by clicking on the time and then clicking the "Go to time" button (for some streaming services, you may need to bring the playback near that time manually first, because of buffering issues). Go to the initial time of a skip, rewind a little by clicking the back arrow button a few times, make sure the appropriate category filter is set on a level that would activate the edit (High for level 1, Medium for level 2, Low for level 3), and resume playback.
+If the movie skips, blanks, or mutes as intended, you're good with that item and can check the next one. But if you feel that one of the times needs to be adjusted, just highlight that time on the box and click the forward or backward arrow buttons (you can also use the Fine setting; the Alt setting causes all the timings to change simultaneously). Don't forget to save your corrected skips. A new version of the skip file is saved each time you click the "Save" button.
+You can share your skip file by email, texting, or whatever method you prefer. Please keep the SKP extension at the end of the name, so VideoSkip can recognize the file as its own. You can also post it here on the VideoSkip website for the world to enjoy. A free account is required in order to post.
+
+A final word on the "Insert silence" button. Clicking this during playback (not stopped) will insert a level 1 profanity muting 0.7 seconds *before* the moment you click. The idea is to mute single words that might be offensive to kids. You will need to edit the entry if you want the muting to be longer or have a higher rating.

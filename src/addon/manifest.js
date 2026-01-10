@@ -15,7 +15,7 @@ const manifest = {
   background: 'https://raw.githubusercontent.com/cleanstream/cleanstream-stremio/main/assets/background.jpg',
   
   // Resources we provide
-  resources: ['subtitles'],
+  resources: ['catalog', 'subtitles'],
   
   // Content types we support
   types: ['movie', 'series'],
@@ -75,7 +75,17 @@ const manifest = {
     },
   ],
   
-  catalogs: [],
+  catalogs: [
+    {
+      type: 'movie',
+      id: 'cleanstream-movies',
+      name: 'CleanStream Ready',
+      extra: [
+        { name: 'skip', isRequired: false },
+        { name: 'search', isRequired: false },
+      ],
+    },
+  ],
 };
 
 // Create the addon builder

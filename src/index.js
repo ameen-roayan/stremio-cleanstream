@@ -19,6 +19,7 @@ const express = require('express');
 
 const { builder, manifest } = require('./addon/manifest');
 const { subtitlesHandler } = require('./addon/subtitlesHandler');
+const { catalogHandler } = require('./addon/catalogHandler');
 const apiRoutes = require('./api/routes');
 const db = require('./database');
 const cache = require('./cache');
@@ -26,6 +27,9 @@ const cache = require('./cache');
 // Configuration
 const PORT = process.env.PORT || 7000;
 const BASE_URL = process.env.CLEANSTREAM_BASE_URL || `http://localhost:${PORT}`;
+
+// Register the catalog handler
+builder.defineCatalogHandler(catalogHandler);
 
 // Register the subtitles handler
 builder.defineSubtitlesHandler(subtitlesHandler);

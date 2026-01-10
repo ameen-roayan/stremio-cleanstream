@@ -38,7 +38,11 @@ router.get('/health', async (req, res) => {
 router.get('/stats', async (req, res) => {
   try {
     const stats = await db.getStats();
-    res.json(stats);
+    res.json({
+      totalMovies: stats.totalTitles || 0,
+      totalSegments: stats.totalSegments || 0,
+      verifiedSegments: stats.verifiedSegments || 0,
+    });
   } catch (error) {
     res.status(500).json({ error: 'Failed to get stats' });
   }

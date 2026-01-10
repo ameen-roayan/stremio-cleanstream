@@ -12,9 +12,10 @@ const db = require('../database');
  */
 function parseUserConfig(config) {
   // Default configuration - sensible defaults for family viewing
+  // Lower threshold = more filtering (skip more content)
   const defaults = {
-    nudity: 'high',    // Skip all nudity by default
-    sex: 'high',       // Skip all sexual content by default
+    nudity: 'low',     // Skip all nudity (low, medium, high)
+    sex: 'low',        // Skip all sexual content
     violence: 'medium', // Skip medium+ violence
     language: 'off',   // Don't skip language by default
     drugs: 'off',      // Don't skip drug content by default
