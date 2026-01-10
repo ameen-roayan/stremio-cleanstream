@@ -10,6 +10,8 @@
 const { PrismaClient } = require('@prisma/client');
 const { exec } = require('child_process');
 const { promisify } = require('util');
+const fs = require('fs');
+const path = require('path');
 
 const execAsync = promisify(exec);
 
@@ -101,6 +103,80 @@ async function generateClient() {
 }
 
 /**
+ * Auto-seed database if empty
+ * Only seeds if there are no titles in the database and seed-data.json exists
+ */
+async function autoSeed() {
+  const client = getClient();
+  
+  try {
+    // Check if database already has data
+    const titleCount = await client.title.count();
+    if (titleCount > 0) {
+      console.log(`[Database] Database already has ${titleCount} titles, skipping seed`);
+      return true;
+    }
+    
+    // Check if seed file exists
+    const seedFile = path.join(process.cwd(), 'data', 'seed-data.json');
+    if (!fs.existsSync(seedFile)) {
+      console.log('[Database] No seed-data.json found, skipping seed');
+      return true;
+    }
+    
+    console.log('[Database] Database is empty, auto-seeding from seed-data.json...');
+    
+    const data = JSON.parse(fs.readFileSync(seedFile, 'utf-8'));
+    console.log(`[Database] Found ${data.length} titles to import`);
+    
+    let importedTitles = 0;
+    let importedSegments = 0;
+    
+    for (const t of data) {
+      if (!t.imdbId) continue;
+      
+      const title = await client.title.upsert({
+        where: { imdbId: t.imdbId },
+        update: { title: t.title, year: t.year },
+        create: { 
+          imdbId: t.imdbId, 
+          title: t.title, 
+          year: t.year, 
+          type: t.type || 'movie' 
+        }
+      });
+      
+      for (const s of t.segments || []) {
+        await client.segment.create({
+          data: {
+            titleId: title.id,
+            startMs: s.startMs,
+            endMs: s.endMs,
+            category: s.category,
+            severity: s.severity,
+            subcategory: s.subcategory || s.category,
+            comment: s.comment,
+            contributor: s.contributor || 'videoskip'
+          }
+        });
+        importedSegments++;
+      }
+      
+      importedTitles++;
+      if (importedTitles % 50 === 0) {
+        console.log(`[Database] Imported ${importedTitles} titles...`);
+      }
+    }
+    
+    console.log(`[Database] Seed complete: ${importedTitles} titles, ${importedSegments} segments`);
+    return true;
+  } catch (error) {
+    console.error('[Database] Auto-seed failed:', error.message);
+    return false;
+  }
+}
+
+/**
  * Initialize database connection and run migrations
  */
 async function initialize() {
@@ -125,6 +201,10 @@ async function initialize() {
   try {
     await client.$connect();
     console.log('[Database] Connected to PostgreSQL');
+    
+    // Auto-seed if database is empty
+    await autoSeed();
+    
     return true;
   } catch (error) {
     console.error('[Database] Connection failed:', error.message);
@@ -163,4 +243,5 @@ module.exports = {
   runMigrations,
   generateClient,
   healthCheck,
+  autoSeed,
 };
