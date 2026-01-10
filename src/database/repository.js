@@ -323,7 +323,29 @@ async function listTitles(options = {}) {
   }
   
   const prisma = getClient();
-  const { limit = 100, offset = 0, hasSegments = true } = options;
+  const { limit = 100, offset = 0, hasSegments = true, sortBy = 'recent' } = options;
+  
+  // Determine orderBy based on sortBy
+  let orderBy;
+  switch (sortBy) {
+    case 'popular':
+      // Sort by segment count (most skips first)
+      orderBy = { segments: { _count: 'desc' } };
+      break;
+    case 'year':
+      // Sort by release year (newest first)
+      orderBy = { year: 'desc' };
+      break;
+    case 'title':
+      // Sort alphabetically
+      orderBy = { title: 'asc' };
+      break;
+    case 'recent':
+    default:
+      // Sort by recently added/updated
+      orderBy = { updatedAt: 'desc' };
+      break;
+  }
   
   const titles = await prisma.title.findMany({
     where: hasSegments ? {
@@ -331,7 +353,7 @@ async function listTitles(options = {}) {
     } : undefined,
     take: limit,
     skip: offset,
-    orderBy: { updatedAt: 'desc' },
+    orderBy: orderBy,
     include: {
       _count: {
         select: { segments: true },

@@ -5,9 +5,6 @@
 
 const db = require('../database');
 
-// TMDB API for poster images (free, no key needed for basic info)
-const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w500';
-
 /**
  * Handle catalog requests from Stremio
  * @param {object} args - { type, id, extra }
@@ -15,9 +12,16 @@ const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w500';
 async function catalogHandler({ type, id, extra }) {
   console.log(`[CleanStream] Catalog request: ${type}/${id}`, extra);
 
-  if (type !== 'movie' || id !== 'cleanstream-movies') {
+  if (type !== 'movie') {
     return { metas: [] };
   }
+
+  // Determine sort order based on catalog id
+  let sortBy = 'recent'; // default
+  if (id === 'cleanstream-recent') sortBy = 'recent';
+  else if (id === 'cleanstream-popular') sortBy = 'popular';
+  else if (id === 'cleanstream-year') sortBy = 'year';
+  else if (id === 'cleanstream-all' || id === 'cleanstream-movies') sortBy = 'title';
 
   const skip = extra?.skip ? parseInt(extra.skip) : 0;
   const search = extra?.search;
@@ -34,10 +38,11 @@ async function catalogHandler({ type, id, extra }) {
         limit: 100,
         offset: skip,
         hasSegments: true,
+        sortBy: sortBy,
       });
     }
 
-    console.log(`[CleanStream] Found ${titles.length} titles`);
+    console.log(`[CleanStream] Found ${titles.length} titles (sorted by ${sortBy})`);
 
     // Convert to Stremio meta format
     const metas = titles.map(title => ({
@@ -47,7 +52,6 @@ async function catalogHandler({ type, id, extra }) {
       poster: title.posterUrl || generatePosterUrl(title.imdbId),
       description: `CleanStream: ${title.segmentCount || 0} skip segments available`,
       year: title.year,
-      // Add a badge to show it's CleanStream ready
       releaseInfo: title.year ? String(title.year) : undefined,
     }));
 

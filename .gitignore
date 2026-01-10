@@ -39,3 +39,6 @@ Thumbs.db
 # data/filters/*.json
 # !data/filters/tt0133093.json
 # !data/filters/tt0120338.json
+
+scripts/scrape-*.js
+scripts/import-*.js

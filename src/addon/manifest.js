@@ -78,8 +78,33 @@ const manifest = {
   catalogs: [
     {
       type: 'movie',
-      id: 'cleanstream-movies',
-      name: 'CleanStream Ready',
+      id: 'cleanstream-recent',
+      name: 'CleanStream - Recently Added',
+      extra: [
+        { name: 'skip', isRequired: false },
+        { name: 'search', isRequired: false },
+      ],
+    },
+    {
+      type: 'movie',
+      id: 'cleanstream-popular',
+      name: 'CleanStream - Most Skips',
+      extra: [
+        { name: 'skip', isRequired: false },
+      ],
+    },
+    {
+      type: 'movie',
+      id: 'cleanstream-year',
+      name: 'CleanStream - By Year',
+      extra: [
+        { name: 'skip', isRequired: false },
+      ],
+    },
+    {
+      type: 'movie',
+      id: 'cleanstream-all',
+      name: 'CleanStream - All Movies',
       extra: [
         { name: 'skip', isRequired: false },
         { name: 'search', isRequired: false },
