@@ -43,19 +43,9 @@ const app = express();
 // Enable CORS for all routes
 app.use(cors());
 
-// Health check
+// Redirect root to configure page
 app.get('/', (req, res) => {
-  res.json({
-    name: 'CleanStream',
-    version: '1.0.0',
-    description: 'Family-friendly viewing - skip unwanted scenes in movies and TV shows',
-    endpoints: {
-      addon: `${BASE_URL}/manifest.json`,
-      api: `${BASE_URL}/api`,
-      configure: `${BASE_URL}/configure`,
-    },
-    install: `stremio://addon/${encodeURIComponent(BASE_URL + '/manifest.json')}`,
-  });
+  res.redirect('/configure');
 });
 
 // Mount API routes
@@ -232,11 +222,22 @@ app.get('/configure', (req, res) => {
     </div>
     
     <a id="installBtn" class="install-btn" href="#">
-      📥 Install in Stremio
+      📥 Install in Stremio Desktop
     </a>
     
+    <a id="webBtn" class="install-btn" href="#" style="background: #3498db; margin-top: 10px;">
+      🌐 Open in Stremio Web
+    </a>
+    
+    <div class="manifest-url" style="margin-top: 20px;">
+      <label style="font-size: 0.9em; color: #8892b0;">Manifest URL (copy for manual install):</label>
+      <div style="display: flex; gap: 8px; margin-top: 8px;">
+        <input type="text" id="manifestUrl" readonly style="flex: 1; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 10px; border-radius: 6px; font-family: monospace; font-size: 0.85em;">
+        <button onclick="copyManifest()" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 10px 16px; border-radius: 6px; cursor: pointer;">📋 Copy</button>
+      </div>
+    </div>
+    
     <p class="note">
-      After clicking, Stremio will open automatically.<br>
       Works on Desktop, Android, iOS, and Web.
     </p>
     
@@ -252,6 +253,8 @@ app.get('/configure', (req, res) => {
   </div>
   
   <script>
+    const BASE_URL = '${BASE_URL}';
+    
     // Load stats
     fetch('/api/stats')
       .then(r => r.json())
@@ -277,10 +280,23 @@ app.get('/configure', (req, res) => {
       
       // Encode config into the manifest URL
       const configStr = encodeURIComponent(JSON.stringify(config));
-      const manifestUrl = '${BASE_URL}/' + configStr + '/manifest.json';
+      const manifestUrl = BASE_URL + '/' + configStr + '/manifest.json';
       const installUrl = 'stremio://' + manifestUrl.replace(/^https?:\\/\\//, '');
+      const webUrl = 'https://web.stremio.com/#/addons?addon=' + encodeURIComponent(manifestUrl);
       
       document.getElementById('installBtn').href = installUrl;
+      document.getElementById('webBtn').href = webUrl;
+      document.getElementById('manifestUrl').value = manifestUrl;
+    }
+    
+    function copyManifest() {
+      const input = document.getElementById('manifestUrl');
+      input.select();
+      document.execCommand('copy');
+      
+      const btn = event.target;
+      btn.textContent = '✓ Copied!';
+      setTimeout(() => btn.textContent = '📋 Copy', 1500);
     }
     
     // Update on any change
