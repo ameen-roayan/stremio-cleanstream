@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/ameen-roayan/stremio-cleanstream/compare/v1.3.0...v1.3.1) (2026-01-10)
+
+
+### Bug Fixes
+
+* redirect root to configure, add Stremio Web button and manifest URL copy ([35e1273](https://github.com/ameen-roayan/stremio-cleanstream/commit/35e127398e5baca6059c0f55fe9426b721a30c68))
+
 ## [1.3.0](https://github.com/ameen-roayan/stremio-cleanstream/compare/v1.2.0...v1.3.0) (2026-01-10)
 
 
