@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/ameen-roayan/stremio-cleanstream/compare/v1.1.0...v1.2.0) (2026-01-10)
+
+
+### Features
+
+* add TMDB poster support for catalog ([32b58d4](https://github.com/ameen-roayan/stremio-cleanstream/commit/32b58d482a4e36b1ff2ffd3d5c40f610f451dfd1))
+
 ## [1.1.0](https://github.com/ameen-roayan/stremio-cleanstream/compare/v1.0.0...v1.1.0) (2026-01-10)
 
 
