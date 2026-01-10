@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.3.0](https://github.com/ameen-roayan/stremio-cleanstream/compare/v1.2.0...v1.3.0) (2026-01-10)
+
+
+### Features
+
+* auto-seed database on startup if empty ([7177b0a](https://github.com/ameen-roayan/stremio-cleanstream/commit/7177b0a34eca2ac94a7432568e0f30b1a5488de1))
+
+
+### Bug Fixes
+
+* add prisma seed config, bump version to 1.2.0 ([f90d6a8](https://github.com/ameen-roayan/stremio-cleanstream/commit/f90d6a893e90e1e1d3b33b542bc9889427455725))
+* update seed.js to read from seed-data.json ([45c759b](https://github.com/ameen-roayan/stremio-cleanstream/commit/45c759b2cf61045299a124c2149a9a0912619e80))
+
 ## [1.2.0](https://github.com/ameen-roayan/stremio-cleanstream/compare/v1.1.0...v1.2.0) (2026-01-10)
 
 
